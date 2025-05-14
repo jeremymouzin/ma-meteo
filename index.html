@@ -36,6 +36,11 @@
         <div id="hourly-forecast" class="hourly-forecast">
             <!-- Les prévisions horaires seront insérées ici via JavaScript -->
         </div>
+
+        <h2 class="daily-forecast-title">Prévisions pour les prochains jours</h2>
+        <div id="daily-forecast" class="daily-forecast">
+            <!-- Les prévisions pour les 4 prochains jours seront insérées ici via JavaScript -->
+        </div>
     </div>
 
     <footer>
@@ -46,7 +51,7 @@
         // Définition manuelle de la classe OpenMeteo puisque le CDN ne fonctionne pas correctement
         class OpenMeteo {
             async forecast(params) {
-                const { latitude, longitude, current, hourly, timezone, forecast_days } = params;
+                const { latitude, longitude, current, hourly, daily, timezone, forecast_days } = params;
 
                 let url = new URL('https://api.open-meteo.com/v1/forecast');
                 url.searchParams.append('latitude', latitude);
@@ -58,6 +63,10 @@
 
                 if (hourly && hourly.length) {
                     url.searchParams.append('hourly', hourly.join(','));
+                }
+
+                if (daily && daily.length) {
+                    url.searchParams.append('daily', daily.join(','));
                 }
 
                 url.searchParams.append('timezone', timezone || 'auto');

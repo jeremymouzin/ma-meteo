@@ -8,6 +8,7 @@ const locationElement = document.getElementById("location");
 const refreshButton = document.getElementById("refresh-btn");
 const currentWeatherContainer = document.getElementById("current-weather");
 const hourlyForecastContainer = document.getElementById("hourly-forecast");
+const dailyForecastContainer = document.getElementById("daily-forecast");
 const loader = document.getElementById("loader");
 
 // Événements
@@ -66,6 +67,7 @@ function refreshWeather() {
         currentWeatherContainer.innerHTML = '';
         currentWeatherContainer.appendChild(loader);
         hourlyForecastContainer.innerHTML = '';
+        dailyForecastContainer.innerHTML = '';
         getWeatherData(userLatitude, userLongitude);
     } else {
         getUserLocation();
@@ -82,12 +84,14 @@ async function getWeatherData(latitude, longitude) {
             longitude,
             current: ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "weather_code"],
             hourly: ["temperature_2m", "precipitation_probability", "precipitation", "weather_code", "cloud_cover"],
+            daily: ["weather_code", "temperature_2m_max", "temperature_2m_min", "precipitation_sum", "precipitation_probability_max"],
             timezone: "auto",
-            forecast_days: 1
+            forecast_days: 5 // +1 pour le jour actuel et 4 jours à venir
         });
 
         displayCurrentWeather(forecast);
         displayHourlyForecast(forecast);
+        displayDailyForecast(forecast);
 
         loader.style.display = "none";
     } catch (error) {
@@ -182,6 +186,86 @@ function displayHourlyForecast(forecast) {
 
         hourlyForecastContainer.appendChild(forecastCard);
     }
+}
+
+// Afficher les prévisions pour les 4 prochains jours
+function displayDailyForecast(forecast) {
+    const daily = forecast.daily;
+    const dailyDates = daily.time;
+    const dailyMaxTemps = daily.temperature_2m_max;
+    const dailyMinTemps = daily.temperature_2m_min;
+    const dailyPrecipSum = daily.precipitation_sum;
+    const dailyPrecipProb = daily.precipitation_probability_max;
+    const dailyWeatherCodes = daily.weather_code;
+
+    dailyForecastContainer.innerHTML = '';
+
+    // Commencer à partir de demain (index 1) pour les 4 prochains jours
+    for (let i = 1; i < 5; i++) {
+        const date = new Date(dailyDates[i]);
+        const formattedDate = formatDate(date);
+        const maxTemp = dailyMaxTemps[i];
+        const minTemp = dailyMinTemps[i];
+        const precipSum = dailyPrecipSum[i];
+        const precipProb = dailyPrecipProb[i];
+        const weatherCode = dailyWeatherCodes[i];
+
+        const weatherInfo = getWeatherInfo(weatherCode);
+        const weatherClass = getWeatherClass(weatherCode);
+
+        // Calculer les températures du matin (25%) et de l'après-midi (75%)
+        const morningTemp = minTemp + (maxTemp - minTemp) * 0.25;
+        const afternoonTemp = minTemp + (maxTemp - minTemp) * 0.75;
+
+        // Calculer les précipitations du matin et de l'après-midi (simplement divisées par 2 pour cet exemple)
+        const morningPrecip = precipSum / 2;
+        const afternoonPrecip = precipSum / 2;
+
+        const dailyCard = document.createElement('div');
+        dailyCard.className = `daily-card ${weatherClass}`;
+        dailyCard.innerHTML = `
+            <div class="daily-date">${formattedDate}</div>
+            <img src="${weatherInfo.icon}" alt="${weatherInfo.description}" class="daily-icon">
+            
+            <div class="daily-period">
+                <span class="period-name">Matin</span>
+                <div class="period-value">
+                    <span class="period-temp">${Math.round(morningTemp)}°C</span>
+                    <span class="period-precip">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                        </svg>
+                        ${precipProb}% (${morningPrecip.toFixed(1)} mm)
+                    </span>
+                </div>
+            </div>
+            
+            <div class="daily-period">
+                <span class="period-name">Après-midi</span>
+                <div class="period-value">
+                    <span class="period-temp">${Math.round(afternoonTemp)}°C</span>
+                    <span class="period-precip">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                        </svg>
+                        ${precipProb}% (${afternoonPrecip.toFixed(1)} mm)
+                    </span>
+                </div>
+            </div>
+        `;
+
+        dailyForecastContainer.appendChild(dailyCard);
+    }
+}
+
+// Formater la date au format "Jour DD/MM"
+function formatDate(date) {
+    const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const day = days[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const month = date.getMonth() + 1;
+
+    return `${day} ${dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth}/${month < 10 ? '0' + month : month}`;
 }
 
 // Obtenir les informations météo en fonction du code météo

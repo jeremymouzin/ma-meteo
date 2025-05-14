@@ -45,6 +45,13 @@ h1 {
     color: var(--primary-color);
 }
 
+h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 2rem 0 1rem;
+}
+
 .location-info {
     display: flex;
     align-items: center;
@@ -169,6 +176,80 @@ h1 {
     color: #666;
 }
 
+.daily-forecast-title {
+    margin-top: 3rem;
+}
+
+.daily-forecast {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.daily-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.daily-card:hover {
+    transform: translateY(-5px);
+}
+
+.daily-date {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.daily-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0.5rem auto;
+}
+
+.daily-period {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid #eee;
+}
+
+.daily-period:first-of-type {
+    border-top: none;
+}
+
+.period-name {
+    font-weight: 600;
+    color: #666;
+}
+
+.period-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.period-temp {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.period-precip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
 .weather-sunny {
     background: var(--sunny-gradient);
     color: var(--text-color);
@@ -235,8 +316,16 @@ footer a:hover {
         font-size: 2rem;
     }
 
+    h2 {
+        font-size: 1.5rem;
+    }
+
     .hourly-forecast {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .daily-forecast {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
 }
 
@@ -248,5 +337,9 @@ footer a:hover {
 
     .hourly-forecast {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .daily-forecast {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
 }
