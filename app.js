@@ -109,11 +109,49 @@ async function getWeatherData(latitude, longitude) {
 // Afficher la météo actuelle
 function displayCurrentWeather(forecast) {
     const current = forecast.current;
+    const hourly = forecast.hourly;
     const weatherCode = current.weather_code;
     const temp = current.temperature_2m;
     const humidity = current.relative_humidity_2m;
     const feelsLike = current.apparent_temperature;
     const precipitation = current.precipitation;
+
+    // Calcul du risque de pluie pour la matinée et l'après-midi du jour actuel
+    const currentDate = new Date();
+    const currentHour = currentDate.getHours();
+
+    // Définition des plages horaires pour le matin (6h-12h) et l'après-midi (12h-18h)
+    const morningStartHour = 6;
+    const morningEndHour = 12;
+    const afternoonStartHour = 12;
+    const afternoonEndHour = 18;
+
+    let morningRainProbabilities = [];
+    let afternoonRainProbabilities = [];
+
+    // Récupérer les probabilités de précipitation pour les heures correspondantes
+    for (let i = 0; i < 24; i++) {
+        const time = new Date(hourly.time[i]);
+        const hour = time.getHours();
+        const isSameDay = time.getDate() === currentDate.getDate();
+
+        if (isSameDay) {
+            if (hour >= morningStartHour && hour < morningEndHour) {
+                morningRainProbabilities.push(hourly.precipitation_probability[i]);
+            } else if (hour >= afternoonStartHour && hour < afternoonEndHour) {
+                afternoonRainProbabilities.push(hourly.precipitation_probability[i]);
+            }
+        }
+    }
+
+    // Calculer les moyennes des probabilités de pluie
+    const morningRainProbability = morningRainProbabilities.length > 0
+        ? Math.round(morningRainProbabilities.reduce((a, b) => a + b, 0) / morningRainProbabilities.length)
+        : "N/A";
+
+    const afternoonRainProbability = afternoonRainProbabilities.length > 0
+        ? Math.round(afternoonRainProbabilities.reduce((a, b) => a + b, 0) / afternoonRainProbabilities.length)
+        : "N/A";
 
     const weatherInfo = getWeatherInfo(weatherCode);
     const weatherClass = getWeatherClass(weatherCode);
@@ -135,6 +173,20 @@ function displayCurrentWeather(forecast) {
                 <div class="weather-detail">
                     <span class="detail-value">${precipitation} mm</span>
                     <span class="detail-label">Précipitations</span>
+                </div>
+            </div>
+            <div class="rain-probability">
+                <div class="rain-probability-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                    </svg>
+                    <span>Matin: ${morningRainProbability}% de risque de pluie</span>
+                </div>
+                <div class="rain-probability-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                    </svg>
+                    <span>Après-midi: ${afternoonRainProbability}% de risque de pluie</span>
                 </div>
             </div>
         </div>

@@ -130,6 +130,29 @@ h2 {
     color: #666;
 }
 
+.rain-probability {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 400px;
+}
+
+.rain-probability-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.rain-probability-item svg {
+    color: var(--primary-color);
+}
+
 .hourly-forecast {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -327,6 +350,14 @@ footer a:hover {
     .daily-forecast {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
+
+    .rain-probability {
+        padding: 0.8rem;
+    }
+
+    .rain-probability-item {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -341,5 +372,9 @@ footer a:hover {
 
     .daily-forecast {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .rain-probability-item {
+        font-size: 0.8rem;
     }
 }
