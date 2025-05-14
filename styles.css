@@ -329,6 +329,75 @@ footer a:hover {
     }
 }
 
+/* Styles pour l'interface de saisie manuelle */
+.location-fallback {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.location-input-container {
+    display: flex;
+    max-width: 400px;
+    margin: 1.5rem auto 0;
+}
+
+.location-input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.location-submit {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    padding: 0 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.location-submit:hover {
+    background: var(--secondary-color);
+}
+
+.error-info {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+}
+
+.retry-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+    background: var(--secondary-color);
+}
+
 /* Media Queries pour la responsivité */
 @media (max-width: 768px) {
     .container {
@@ -358,6 +427,10 @@ footer a:hover {
     .rain-probability-item {
         font-size: 0.9rem;
     }
+
+    .location-input-container {
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -376,5 +449,19 @@ footer a:hover {
 
     .rain-probability-item {
         font-size: 0.8rem;
+    }
+
+    .location-input-container {
+        flex-direction: column;
+    }
+
+    .location-input {
+        border-radius: var(--border-radius);
+        margin-bottom: 0.5rem;
+    }
+
+    .location-submit {
+        border-radius: var(--border-radius);
+        padding: 0.8rem;
     }
 }

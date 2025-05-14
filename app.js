@@ -2,6 +2,7 @@
 let userLatitude;
 let userLongitude;
 let locationName = "Votre position";
+let isLocating = false;
 
 // DOM Elements
 const locationElement = document.getElementById("location");
@@ -22,22 +23,120 @@ function initApp() {
 
 // Obtenir la géolocalisation de l'utilisateur
 function getUserLocation() {
+    if (isLocating) return;
+
+    isLocating = true;
+    loader.style.display = "flex";
+
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                userLatitude = position.coords.latitude;
-                userLongitude = position.coords.longitude;
-                getLocationName(userLatitude, userLongitude);
-                getWeatherData(userLatitude, userLongitude);
-            },
-            error => {
-                handleLocationError(error);
-            },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
+        try {
+            const geoOptions = {
+                enableHighAccuracy: true,
+                timeout: 15000, // 15 secondes au lieu de 5
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    isLocating = false;
+                    userLatitude = position.coords.latitude;
+                    userLongitude = position.coords.longitude;
+                    getLocationName(userLatitude, userLongitude);
+                    getWeatherData(userLatitude, userLongitude);
+                },
+                error => {
+                    isLocating = false;
+                    console.error("Erreur de géolocalisation:", error);
+                    handleLocationError(error);
+                },
+                geoOptions
+            );
+
+            // Ajouter un timeout de secours au cas où la géolocalisation ne répond pas
+            setTimeout(() => {
+                if (isLocating) {
+                    isLocating = false;
+                    displayLocationFallback();
+                }
+            }, 20000); // 20 secondes
+
+        } catch (e) {
+            isLocating = false;
+            console.error("Exception lors de la géolocalisation:", e);
+            displayLocationFallback();
+        }
     } else {
+        isLocating = false;
         locationElement.textContent = "La géolocalisation n'est pas prise en charge par votre navigateur";
+        displayLocationFallback();
+    }
+}
+
+// Afficher une interface de fallback pour saisir manuellement une localisation
+function displayLocationFallback() {
+    loader.style.display = "none";
+
+    currentWeatherContainer.innerHTML = `
+        <div class="location-fallback">
+            <p>Impossible d'accéder à votre position. Veuillez saisir une ville :</p>
+            <div class="location-input-container">
+                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input">
+                <button id="location-submit" class="location-submit">Rechercher</button>
+            </div>
+        </div>
+    `;
+
+    // Ajouter un écouteur d'événement pour le bouton de recherche
+    document.getElementById("location-submit").addEventListener("click", searchLocation);
+
+    // Permettre de soumettre en appuyant sur Entrée
+    document.getElementById("location-input").addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            searchLocation();
+        }
+    });
+}
+
+// Rechercher la météo par nom de ville
+async function searchLocation() {
+    const locationInput = document.getElementById("location-input");
+    const cityName = locationInput.value.trim();
+
+    if (!cityName) return;
+
+    loader.style.display = "flex";
+    currentWeatherContainer.innerHTML = '';
+    currentWeatherContainer.appendChild(loader);
+
+    try {
+        // Utiliser Nominatim pour obtenir les coordonnées à partir du nom de la ville
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityName)}`);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            userLatitude = parseFloat(data[0].lat);
+            userLongitude = parseFloat(data[0].lon);
+            locationName = data[0].display_name.split(',')[0];
+            locationElement.textContent = locationName;
+
+            getWeatherData(userLatitude, userLongitude);
+        } else {
+            throw new Error("Localisation non trouvée");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la recherche de localisation:", error);
         loader.style.display = "none";
+        currentWeatherContainer.innerHTML = `
+            <div class="error-message">
+                <p>Impossible de trouver la localisation "${cityName}".</p>
+                <p>Veuillez vérifier l'orthographe et réessayer.</p>
+                <button id="retry-location" class="retry-button">Réessayer</button>
+            </div>
+        `;
+
+        document.getElementById("retry-location").addEventListener("click", () => {
+            displayLocationFallback();
+        });
     }
 }
 
@@ -373,13 +472,13 @@ function handleLocationError(error) {
 
     switch (error.code) {
         case error.PERMISSION_DENIED:
-            errorMessage = "L'accès à la géolocalisation a été refusé. Veuillez autoriser l'accès pour obtenir des prévisions météo locales.";
+            errorMessage = "L'accès à la géolocalisation a été refusé. Veuillez autoriser l'accès dans les paramètres de votre appareil ou utiliser la recherche par ville.";
             break;
         case error.POSITION_UNAVAILABLE:
-            errorMessage = "Les informations de localisation sont indisponibles.";
+            errorMessage = "Les informations de localisation sont indisponibles. Vérifiez que les services de localisation sont activés.";
             break;
         case error.TIMEOUT:
-            errorMessage = "La demande de localisation a expiré.";
+            errorMessage = "La demande de localisation a expiré. Vérifiez votre connexion internet et réessayez.";
             break;
         default:
             errorMessage = "Une erreur inconnue s'est produite lors de la géolocalisation.";
@@ -387,12 +486,14 @@ function handleLocationError(error) {
     }
 
     locationElement.textContent = "Localisation non disponible";
-    currentWeatherContainer.innerHTML = `
-        <div class="error-message">
-            <p>${errorMessage}</p>
-            <p>Veuillez réessayer plus tard ou autoriser l'accès à votre position.</p>
-        </div>
-    `;
+    displayLocationFallback();
 
-    loader.style.display = "none";
+    // Ajouter un message d'information
+    const fallbackElement = document.querySelector(".location-fallback");
+    if (fallbackElement) {
+        const errorInfoElement = document.createElement("p");
+        errorInfoElement.className = "error-info";
+        errorInfoElement.textContent = errorMessage;
+        fallbackElement.insertBefore(errorInfoElement, fallbackElement.firstChild);
+    }
 } 
