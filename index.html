@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Météo Locale</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Ma Météo Locale</h1>
+            <div class="location-info">
+                <span id="location">Localisation en cours...</span>
+                <button id="refresh-btn" aria-label="Rafraîchir la météo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div id="current-weather" class="current-weather">
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <p>Chargement des données météo...</p>
+            </div>
+        </div>
+
+        <div id="hourly-forecast" class="hourly-forecast">
+            <!-- Les prévisions horaires seront insérées ici via JavaScript -->
+        </div>
+    </div>
+
+    <footer>
+        <p>Données fournies par <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a></p>
+    </footer>
+
+    <script>
+        // Définition manuelle de la classe OpenMeteo puisque le CDN ne fonctionne pas correctement
+        class OpenMeteo {
+            async forecast(params) {
+                const { latitude, longitude, current, hourly, timezone, forecast_days } = params;
+
+                let url = new URL('https://api.open-meteo.com/v1/forecast');
+                url.searchParams.append('latitude', latitude);
+                url.searchParams.append('longitude', longitude);
+
+                if (current && current.length) {
+                    url.searchParams.append('current', current.join(','));
+                }
+
+                if (hourly && hourly.length) {
+                    url.searchParams.append('hourly', hourly.join(','));
+                }
+
+                url.searchParams.append('timezone', timezone || 'auto');
+
+                if (forecast_days) {
+                    url.searchParams.append('forecast_days', forecast_days);
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Erreur API: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            }
+        }
+    </script>
+    <script src="app.js"></script>
+</body>
+
+</html>

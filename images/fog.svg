@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="fogGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eceff1" />
+      <stop offset="100%" stop-color="#b0bec5" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Fog layers -->
+  <g fill="url(#fogGradient)">
+    <rect x="14" y="20" width="36" height="3" rx="1.5" />
+    <rect x="10" y="28" width="44" height="3" rx="1.5" />
+    <rect x="12" y="36" width="40" height="3" rx="1.5" />
+    <rect x="16" y="44" width="32" height="3" rx="1.5" />
+  </g>
+</svg> 

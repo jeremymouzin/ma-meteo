@@ -1,0 +1,16 @@
+{
+    "name": "ma-meteo",
+    "version": "1.0.0",
+    "description": "Application météo locale utilisant l'API Open-Meteo",
+    "main": "index.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "meteo",
+        "open-meteo",
+        "weather"
+    ],
+    "author": "",
+    "license": "ISC"
+}

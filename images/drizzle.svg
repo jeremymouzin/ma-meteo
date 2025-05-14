@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eceff1" />
+      <stop offset="100%" stop-color="#b0bec5" />
+    </linearGradient>
+    <linearGradient id="drizzleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b3e5fc" />
+      <stop offset="100%" stop-color="#29b6f6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cloud -->
+  <path d="M50,26c0-6.6-5.4-12-12-12c-5.4,0-10,3.6-11.5,8.5c-0.7-0.3-1.5-0.5-2.4-0.5c-2.5,0-4.5,1.7-5.1,4c-0.3,0-0.7-0.1-1-0.1
+    c-4.4,0-8,3.6-8,8s3.6,8,8,8h28c4.4,0,8-3.6,8-8S54.4,26,50,26z" fill="url(#cloudGradient)" />
+  
+  <!-- Drizzle - Small Drops -->
+  <g fill="url(#drizzleGradient)">
+    <path d="M22,44c0,0.8-0.7,1.5-1.5,1.5S19,44.8,19,44s1.5-3,1.5-3S22,43.2,22,44z" />
+    <path d="M32,44c0,0.8-0.7,1.5-1.5,1.5S29,44.8,29,44s1.5-3,1.5-3S32,43.2,32,44z" />
+    <path d="M42,44c0,0.8-0.7,1.5-1.5,1.5S39,44.8,39,44s1.5-3,1.5-3S42,43.2,42,44z" />
+    <path d="M17,50c0,0.8-0.7,1.5-1.5,1.5S14,50.8,14,50s1.5-3,1.5-3S17,49.2,17,50z" />
+    <path d="M27,50c0,0.8-0.7,1.5-1.5,1.5S24,50.8,24,50s1.5-3,1.5-3S27,49.2,27,50z" />
+    <path d="M37,50c0,0.8-0.7,1.5-1.5,1.5S34,50.8,34,50s1.5-3,1.5-3S37,49.2,37,50z" />
+    <path d="M47,50c0,0.8-0.7,1.5-1.5,1.5S44,50.8,44,50s1.5-3,1.5-3S47,49.2,47,50z" />
+  </g>
+</svg> 
