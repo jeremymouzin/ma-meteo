@@ -66,19 +66,19 @@ function displayChangeLocationForm() {
     dailyForecastContainer.innerHTML = '';
 
     // Ajouter l'écouteur pour la recherche
-    document.getElementById("location-submit").addEventListener("click", () => {
+    currentWeatherContainer.querySelector("#location-submit").addEventListener("click", () => {
         searchAndSaveLocation();
     });
 
     // Ajouter l'écouteur pour la touche Entrée
-    document.getElementById("location-input").addEventListener("keyup", event => {
+    currentWeatherContainer.querySelector("#location-input").addEventListener("keyup", event => {
         if (event.key === "Enter") {
             searchAndSaveLocation();
         }
     });
 
     // Ajouter l'écouteur pour utiliser la géolocation
-    document.getElementById("use-geolocation").addEventListener("click", () => {
+    currentWeatherContainer.querySelector("#use-geolocation").addEventListener("click", () => {
         // Supprimer les données sauvegardées
         localStorage.removeItem(STORAGE_KEY);
         // Relancer l'application avec la géolocation
@@ -86,7 +86,7 @@ function displayChangeLocationForm() {
     });
 
     // Ajouter l'écouteur pour annuler
-    document.getElementById("cancel-location-change").addEventListener("click", () => {
+    currentWeatherContainer.querySelector("#cancel-location-change").addEventListener("click", () => {
         // Restaurer l'affichage précédent
         getWeatherData(userLatitude, userLongitude);
     });
