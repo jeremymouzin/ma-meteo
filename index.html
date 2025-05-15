@@ -74,45 +74,6 @@
         <p>Données fournies par <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> — Développé par <a
                 href="https://www.jeremymouzin.com">Jérémy Mouzin</a> avec l'aide d'une IA</p>
     </footer>
-
-    <script>
-        // Définition manuelle de la classe OpenMeteo puisque le CDN ne fonctionne pas correctement
-        class OpenMeteo {
-            async forecast(params) {
-                const { latitude, longitude, current, hourly, daily, timezone, forecast_days } = params;
-
-                let url = new URL('https://api.open-meteo.com/v1/forecast');
-                url.searchParams.append('latitude', latitude);
-                url.searchParams.append('longitude', longitude);
-
-                if (current && current.length) {
-                    url.searchParams.append('current', current.join(','));
-                }
-
-                if (hourly && hourly.length) {
-                    url.searchParams.append('hourly', hourly.join(','));
-                }
-
-                if (daily && daily.length) {
-                    url.searchParams.append('daily', daily.join(','));
-                }
-
-                url.searchParams.append('timezone', timezone || 'auto');
-
-                if (forecast_days) {
-                    url.searchParams.append('forecast_days', forecast_days);
-                }
-
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Erreur API: ${response.status}`);
-                }
-
-                const data = await response.json();
-                return data;
-            }
-        }
-    </script>
 </body>
 
 </html>

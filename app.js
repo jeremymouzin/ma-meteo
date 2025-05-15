@@ -403,17 +403,28 @@ async function getWeatherData(latitude, longitude) {
 
     try {
         loader.style.display = "flex";
-        const openMeteo = new OpenMeteo();
 
-        const forecast = await openMeteo.forecast({
+        const params = {
             latitude,
             longitude,
-            current: ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "weather_code"],
-            hourly: ["temperature_2m", "precipitation_probability", "precipitation", "weather_code", "cloud_cover"],
-            daily: ["weather_code", "temperature_2m_max", "temperature_2m_min", "precipitation_sum", "precipitation_probability_max"],
+            current: ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "weather_code"].join(','),
+            hourly: ["temperature_2m", "precipitation_probability", "precipitation", "weather_code", "cloud_cover"].join(','),
+            daily: ["weather_code", "temperature_2m_max", "temperature_2m_min", "precipitation_sum", "precipitation_probability_max"].join(','),
             timezone: "auto",
             forecast_days: 5 // +1 pour le jour actuel et 4 jours à venir
-        });
+        }
+
+        let url = new URL('https://api.open-meteo.com/v1/forecast');
+        for (const name of Object.keys(params)) {
+            url.searchParams.append(name, params[name]);
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Erreur API: ${response.status}`);
+        }
+
+        const forecast = await response.json();
 
         // Vérifier si les données de forecast sont valides
         if (!forecast || !forecast.current || !forecast.hourly || !forecast.daily) {
