@@ -545,8 +545,7 @@ function displayCurrentWeather(forecast) {
                     <span class="temp-number">${Math.round(maxTemp)}°</span>
                     <span class="temp-label">max</span>
                 </div>
-            </div>
-            <div class="weather-description">${weatherInfo.description}</div>`;
+            </div>`;
 
     // Ajouter l'alerte parapluie si nécessaire
     if (raining) {
