@@ -47,10 +47,6 @@ function initApp() {
 
 // Afficher le formulaire pour changer de ville
 function displayChangeLocationForm() {
-    // Sauvegarder l'état courant des conteneurs
-    const currentHourlyForecast = hourlyForecastContainer.innerHTML;
-    const currentDailyForecast = dailyForecastContainer.innerHTML;
-
     // Afficher le formulaire
     currentWeatherContainer.innerHTML = `
         <div class="location-fallback">
@@ -449,8 +445,6 @@ function displayCurrentWeather(forecast) {
     const hourly = forecast.hourly;
     const daily = forecast.daily;
     const weatherCode = current.weather_code;
-    const temp = current.temperature_2m;
-    const feelsLike = current.apparent_temperature;
 
     // Récupérer les températures min et max du jour actuel (index 0)
     const maxTemp = daily.temperature_2m_max[0];
@@ -458,7 +452,6 @@ function displayCurrentWeather(forecast) {
 
     // Calcul du risque de pluie pour la matinée et l'après-midi du jour actuel
     const currentDate = new Date();
-    const currentHour = currentDate.getHours();
 
     // Définition des plages horaires pour le matin (6h-12h) et l'après-midi (12h-18h)
     const morningStartHour = 6;
@@ -566,9 +559,7 @@ function displayHourlyForecast(forecast) {
     const hourlyTimes = hourly.time;
     const hourlyTemps = hourly.temperature_2m;
     const hourlyPrecipProb = hourly.precipitation_probability;
-    const hourlyPrecip = hourly.precipitation;
     const hourlyWeatherCodes = hourly.weather_code;
-    const hourlyCloudCover = hourly.cloud_cover;
 
     // Filtrer pour n'afficher que les heures restantes de la journée
     const currentHour = new Date().getHours();
@@ -621,7 +612,6 @@ function displayDailyForecast(forecast) {
     const dailyDates = daily.time;
     const dailyMaxTemps = daily.temperature_2m_max;
     const dailyMinTemps = daily.temperature_2m_min;
-    const dailyPrecipSum = daily.precipitation_sum;
     const dailyPrecipProb = daily.precipitation_probability_max;
     const dailyWeatherCodes = daily.weather_code;
 
