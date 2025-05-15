@@ -143,7 +143,7 @@ async function searchAndSaveLocation() {
             }
 
             // Extraire le nom de la ville
-            locationName = data[0].display_name.split(',')[0];
+            locationName = data[0].name;
             locationElement.textContent = locationName;
 
             // Sauvegarder la localisation
