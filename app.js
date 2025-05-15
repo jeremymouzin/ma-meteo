@@ -55,10 +55,10 @@ function displayChangeLocationForm() {
         <div class="location-fallback">
             <h3>Changer de ville</h3>
             <p>Entrez le nom de la ville pour laquelle vous souhaitez consulter la météo :</p>
-            <div class="location-input-container">
-                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input">
+            <form class="location-input-container">
+                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input" required>
                 <button id="location-submit" class="location-submit">Rechercher</button>
-            </div>
+            </form>
             <button id="use-geolocation" class="use-geolocation-btn">Utiliser ma position actuelle</button>
             <button id="cancel-location-change" class="cancel-button">Annuler</button>
         </div>
@@ -69,15 +69,8 @@ function displayChangeLocationForm() {
     dailyForecastContainer.innerHTML = '';
 
     // Ajouter l'écouteur pour la recherche
-    currentWeatherContainer.querySelector("#location-submit").addEventListener("click", () => {
+    currentWeatherContainer.querySelector("form").addEventListener("submit", () => {
         searchAndSaveLocation();
-    });
-
-    // Ajouter l'écouteur pour la touche Entrée
-    currentWeatherContainer.querySelector("#location-input").addEventListener("keyup", event => {
-        if (event.key === "Enter") {
-            searchAndSaveLocation();
-        }
     });
 
     // Ajouter l'écouteur pour utiliser la géolocation
