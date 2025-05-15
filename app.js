@@ -3,6 +3,7 @@ let userLatitude;
 let userLongitude;
 let locationName = "Votre position";
 let isLocating = false;
+const STORAGE_KEY = "meteo-location"; // Clé pour le localStorage
 
 // DOM Elements
 const locationElement = document.getElementById("location");
@@ -18,7 +19,228 @@ refreshButton.addEventListener("click", refreshWeather);
 
 // Initialisation de l'application
 function initApp() {
-    getUserLocation();
+    // Ajouter le bouton pour changer de ville
+    addChangeLocationButton();
+
+    // Vérifier s'il y a une ville sauvegardée
+    const savedLocation = getSavedLocation();
+
+    if (savedLocation) {
+        // Vérifier que les données sauvegardées sont valides
+        const { latitude, longitude, name } = savedLocation;
+
+        if (name && latitude && longitude && !isNaN(latitude) && !isNaN(longitude)) {
+            userLatitude = latitude;
+            userLongitude = longitude;
+            locationName = name;
+
+            locationElement.textContent = locationName;
+            getWeatherData(userLatitude, userLongitude);
+        } else {
+            console.warn("Données de localisation sauvegardées invalides:", savedLocation);
+            localStorage.removeItem(STORAGE_KEY);
+            getUserLocation();
+        }
+    } else {
+        getUserLocation();
+    }
+}
+
+// Ajouter un bouton pour changer de ville
+function addChangeLocationButton() {
+    const locationInfo = document.querySelector(".location-info");
+
+    // Créer le bouton pour changer de ville
+    const changeLocationBtn = document.createElement("button");
+    changeLocationBtn.id = "change-location-btn";
+    changeLocationBtn.setAttribute("aria-label", "Changer de ville");
+    changeLocationBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="10" r="3"></circle>
+            <path d="M12 2a8 8 0 0 0-8 8c0 1.892 1.703 5.243 5 10 3.297-4.757 5-8.108 5-10a8 8 0 0 0-2-5.292"></path>
+            <path d="M20 18h-8"></path>
+            <path d="M18 14l4 4-4 4"></path>
+        </svg>
+    `;
+
+    // Ajouter l'événement click
+    changeLocationBtn.addEventListener("click", displayChangeLocationForm);
+
+    // Ajouter le bouton après l'élément de localisation
+    locationInfo.appendChild(changeLocationBtn);
+}
+
+// Afficher le formulaire pour changer de ville
+function displayChangeLocationForm() {
+    // Sauvegarder l'état courant des conteneurs
+    const currentHourlyForecast = hourlyForecastContainer.innerHTML;
+    const currentDailyForecast = dailyForecastContainer.innerHTML;
+
+    // Afficher le formulaire
+    currentWeatherContainer.innerHTML = `
+        <div class="location-fallback">
+            <h3>Changer de ville</h3>
+            <p>Entrez le nom de la ville pour laquelle vous souhaitez consulter la météo :</p>
+            <div class="location-input-container">
+                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input">
+                <button id="location-submit" class="location-submit">Rechercher</button>
+            </div>
+            <button id="use-geolocation" class="use-geolocation-btn">Utiliser ma position actuelle</button>
+            <button id="cancel-location-change" class="cancel-button">Annuler</button>
+        </div>
+    `;
+
+    // Vider les prévisions
+    hourlyForecastContainer.innerHTML = '';
+    dailyForecastContainer.innerHTML = '';
+
+    // Ajouter l'écouteur pour la recherche
+    document.getElementById("location-submit").addEventListener("click", () => {
+        searchAndSaveLocation();
+    });
+
+    // Ajouter l'écouteur pour la touche Entrée
+    document.getElementById("location-input").addEventListener("keyup", event => {
+        if (event.key === "Enter") {
+            searchAndSaveLocation();
+        }
+    });
+
+    // Ajouter l'écouteur pour utiliser la géolocation
+    document.getElementById("use-geolocation").addEventListener("click", () => {
+        // Supprimer les données sauvegardées
+        localStorage.removeItem(STORAGE_KEY);
+        // Relancer l'application avec la géolocation
+        getUserLocation();
+    });
+
+    // Ajouter l'écouteur pour annuler
+    document.getElementById("cancel-location-change").addEventListener("click", () => {
+        // Restaurer l'affichage précédent
+        getWeatherData(userLatitude, userLongitude);
+    });
+}
+
+// Rechercher et sauvegarder la localisation
+async function searchAndSaveLocation() {
+    const locationInput = document.getElementById("location-input");
+    const cityName = locationInput.value.trim();
+
+    if (!cityName) return;
+
+    loader.style.display = "flex";
+    currentWeatherContainer.innerHTML = '';
+    currentWeatherContainer.appendChild(loader);
+
+    try {
+        // Utiliser Nominatim pour obtenir les coordonnées à partir du nom de la ville
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityName)}`);
+
+        // Vérifier si la réponse est OK
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        // Vérifier le Content-Type
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error(`Réponse non-JSON: ${contentType}`);
+        }
+
+        // Analyser le JSON
+        const text = await response.text();
+        if (!text || text.trim() === '') {
+            throw new Error("Réponse vide");
+        }
+
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (parseError) {
+            console.error("Erreur lors du parsing JSON:", parseError, "Texte reçu:", text);
+            throw new Error("Format de réponse invalide");
+        }
+
+        if (data && data.length > 0) {
+            userLatitude = parseFloat(data[0].lat);
+            userLongitude = parseFloat(data[0].lon);
+
+            // S'assurer que les coordonnées sont valides
+            if (isNaN(userLatitude) || isNaN(userLongitude)) {
+                throw new Error("Coordonnées invalides");
+            }
+
+            // Extraire le nom de la ville
+            locationName = data[0].display_name.split(',')[0];
+            locationElement.textContent = locationName;
+
+            // Sauvegarder la localisation
+            saveLocation(locationName, userLatitude, userLongitude);
+
+            // Obtenir les données météo
+            getWeatherData(userLatitude, userLongitude);
+        } else {
+            throw new Error("Localisation non trouvée");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la recherche de localisation:", error);
+        loader.style.display = "none";
+        currentWeatherContainer.innerHTML = `
+            <div class="error-message">
+                <p>Impossible de trouver la localisation "${cityName}".</p>
+                <p>Veuillez vérifier l'orthographe et réessayer.</p>
+                <p class="error-details">${error.message}</p>
+                <button id="retry-location" class="retry-button">Réessayer</button>
+            </div>
+        `;
+
+        document.getElementById("retry-location").addEventListener("click", displayChangeLocationForm);
+    }
+}
+
+// Sauvegarder la localisation dans le localStorage
+function saveLocation(name, latitude, longitude) {
+    const locationData = {
+        name,
+        latitude,
+        longitude,
+        timestamp: Date.now() // Pour savoir quand la donnée a été sauvegardée
+    };
+
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(locationData));
+    } catch (error) {
+        console.error("Erreur lors de la sauvegarde de la localisation:", error);
+    }
+}
+
+// Récupérer la localisation sauvegardée
+function getSavedLocation() {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) return null;
+
+        const data = JSON.parse(savedData);
+
+        // Vérifier si les données ne sont pas trop anciennes (7 jours max)
+        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 jours en millisecondes
+        const now = Date.now();
+
+        if (data.timestamp && (now - data.timestamp > maxAge)) {
+            console.log("Données de localisation expirées, suppression...");
+            localStorage.removeItem(STORAGE_KEY);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la localisation:", error);
+        // En cas d'erreur, nettoyer le localStorage
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+    }
 }
 
 // Obtenir la géolocalisation de l'utilisateur
@@ -87,75 +309,73 @@ function displayLocationFallback() {
     `;
 
     // Ajouter un écouteur d'événement pour le bouton de recherche
-    document.getElementById("location-submit").addEventListener("click", searchLocation);
+    document.getElementById("location-submit").addEventListener("click", searchAndSaveLocation);
 
     // Permettre de soumettre en appuyant sur Entrée
     document.getElementById("location-input").addEventListener("keyup", function (event) {
         if (event.key === "Enter") {
-            searchLocation();
+            searchAndSaveLocation();
         }
     });
-}
-
-// Rechercher la météo par nom de ville
-async function searchLocation() {
-    const locationInput = document.getElementById("location-input");
-    const cityName = locationInput.value.trim();
-
-    if (!cityName) return;
-
-    loader.style.display = "flex";
-    currentWeatherContainer.innerHTML = '';
-    currentWeatherContainer.appendChild(loader);
-
-    try {
-        // Utiliser Nominatim pour obtenir les coordonnées à partir du nom de la ville
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityName)}`);
-        const data = await response.json();
-
-        if (data && data.length > 0) {
-            userLatitude = parseFloat(data[0].lat);
-            userLongitude = parseFloat(data[0].lon);
-            locationName = data[0].display_name.split(',')[0];
-            locationElement.textContent = locationName;
-
-            getWeatherData(userLatitude, userLongitude);
-        } else {
-            throw new Error("Localisation non trouvée");
-        }
-    } catch (error) {
-        console.error("Erreur lors de la recherche de localisation:", error);
-        loader.style.display = "none";
-        currentWeatherContainer.innerHTML = `
-            <div class="error-message">
-                <p>Impossible de trouver la localisation "${cityName}".</p>
-                <p>Veuillez vérifier l'orthographe et réessayer.</p>
-                <button id="retry-location" class="retry-button">Réessayer</button>
-            </div>
-        `;
-
-        document.getElementById("retry-location").addEventListener("click", () => {
-            displayLocationFallback();
-        });
-    }
 }
 
 // Obtenir le nom de l'emplacement à partir des coordonnées
 async function getLocationName(lat, lon) {
     try {
-        const response = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${lon}`);
-        const data = await response.json();
+        // Ajouter un paramètre format=json pour assurer une réponse JSON
+        const response = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${lon}&format=json`);
 
+        // Vérifier si la réponse est OK
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        // Vérifier le Content-Type
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error(`Réponse non-JSON: ${contentType}`);
+        }
+
+        // Analyser le JSON
+        const text = await response.text(); // Récupérer d'abord le texte brut
+        if (!text || text.trim() === '') {
+            throw new Error("Réponse vide");
+        }
+
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (parseError) {
+            console.error("Erreur lors du parsing JSON:", parseError, "Texte reçu:", text);
+            throw new Error("Format de réponse invalide");
+        }
+
+        // Utiliser les données si valides
         if (data && data.address) {
             const address = data.address;
             locationName = address.city || address.town || address.village || address.municipality || "Localisation inconnue";
             locationElement.textContent = locationName;
+
+            // Sauvegarder la localisation
+            saveLocation(locationName, lat, lon);
         } else {
-            locationElement.textContent = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+            // Si aucune adresse n'est trouvée, utiliser les coordonnées
+            locationName = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+            locationElement.textContent = locationName;
+
+            // Sauvegarder avec les coordonnées comme nom
+            saveLocation(locationName, lat, lon);
         }
     } catch (error) {
         console.error("Erreur lors de la récupération du nom de l'emplacement:", error);
-        locationElement.textContent = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+
+        // Utiliser un fallback avec les coordonnées
+        locationName = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+        locationElement.textContent = locationName;
+
+        // Sauvegarder quand même la position
+        saveLocation(locationName, lat, lon);
     }
 }
 
@@ -175,7 +395,14 @@ function refreshWeather() {
 
 // Obtenir les données météo depuis l'API Open-Meteo
 async function getWeatherData(latitude, longitude) {
+    if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) {
+        console.error("Coordonnées invalides:", latitude, longitude);
+        displayWeatherError("Coordonnées géographiques invalides. Veuillez réessayer ou saisir une ville manuellement.");
+        return;
+    }
+
     try {
+        loader.style.display = "flex";
         const openMeteo = new OpenMeteo();
 
         const forecast = await openMeteo.forecast({
@@ -188,6 +415,11 @@ async function getWeatherData(latitude, longitude) {
             forecast_days: 5 // +1 pour le jour actuel et 4 jours à venir
         });
 
+        // Vérifier si les données de forecast sont valides
+        if (!forecast || !forecast.current || !forecast.hourly || !forecast.daily) {
+            throw new Error("Format de données météo invalide ou incomplet");
+        }
+
         displayCurrentWeather(forecast);
         displayHourlyForecast(forecast);
         displayDailyForecast(forecast);
@@ -195,14 +427,52 @@ async function getWeatherData(latitude, longitude) {
         loader.style.display = "none";
     } catch (error) {
         console.error("Erreur lors de la récupération des données météo:", error);
-        loader.style.display = "none";
-        currentWeatherContainer.innerHTML = `
-            <div class="error-message">
-                <p>Une erreur est survenue lors de la récupération des données météorologiques.</p>
-                <p>Veuillez réessayer plus tard.</p>
-            </div>
-        `;
+        displayWeatherError(`Une erreur est survenue lors de la récupération des données météorologiques. ${error.message}`);
     }
+}
+
+// Afficher une erreur météo avec option de réessayer
+function displayWeatherError(message) {
+    loader.style.display = "none";
+    currentWeatherContainer.innerHTML = `
+        <div class="error-message">
+            <p>${message}</p>
+            <button id="retry-weather" class="retry-button">Réessayer</button>
+            <button id="change-location-error" class="cancel-button">Changer de ville</button>
+        </div>
+    `;
+
+    // Vider les conteneurs de prévisions
+    hourlyForecastContainer.innerHTML = '';
+    dailyForecastContainer.innerHTML = '';
+
+    // Ajouter les écouteurs d'événements
+    document.getElementById("retry-weather").addEventListener("click", () => {
+        refreshWeather();
+    });
+
+    document.getElementById("change-location-error").addEventListener("click", () => {
+        displayChangeLocationForm();
+    });
+}
+
+// Vérifier s'il pleut aujourd'hui
+function isRainingToday(forecast) {
+    // Vérifier le code météo actuel
+    const currentWeatherCode = forecast.current.weather_code;
+
+    // Les codes météo pour la pluie sont entre 51 et 99
+    const isCurrentlyRaining = currentWeatherCode >= 51 && currentWeatherCode <= 99;
+
+    // Vérifier aussi les prévisions pour aujourd'hui
+    const todayPrecipSum = forecast.daily.precipitation_sum[0]; // Indice 0 pour aujourd'hui
+    const todayPrecipProb = forecast.daily.precipitation_probability_max[0];
+
+    // Considérer qu'il pleut si:
+    // - Il pleut actuellement
+    // - La somme des précipitations aujourd'hui est > 1mm
+    // - La probabilité de précipitation est > 50%
+    return isCurrentlyRaining || todayPrecipSum > 1 || todayPrecipProb > 50;
 }
 
 // Afficher la météo actuelle
@@ -255,11 +525,33 @@ function displayCurrentWeather(forecast) {
     const weatherInfo = getWeatherInfo(weatherCode);
     const weatherClass = getWeatherClass(weatherCode);
 
-    currentWeatherContainer.innerHTML = `
+    // Vérifier s'il pleut aujourd'hui
+    const raining = isRainingToday(forecast);
+
+    // Contenu HTML de base
+    let htmlContent = `
         <div class="current-weather ${weatherClass}">
             <img src="${weatherInfo.icon}" alt="${weatherInfo.description}" class="weather-icon">
             <div class="temperature">${Math.round(temp)}°C</div>
-            <div class="weather-description">${weatherInfo.description}</div>
+            <div class="weather-description">${weatherInfo.description}</div>`;
+
+    // Ajouter l'alerte parapluie si nécessaire
+    if (raining) {
+        htmlContent += `
+            <div class="umbrella-alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="umbrella-icon">
+                    <path d="M12 2v1"></path>
+                    <path d="M12 7a5 5 0 0 0-5 5 5 5 0 0 0 10 0 5 5 0 0 0-5-5z"></path>
+                    <path d="M12 7V3"></path>
+                    <path d="M3.73 14.67a10 10 0 0 1 16.54 0"></path>
+                    <path d="M12 19v3"></path>
+                </svg>
+                <span>Prends ton parapluie aujourd'hui !</span>
+            </div>`;
+    }
+
+    // Continuer le contenu HTML
+    htmlContent += `
             <div class="weather-details">
                 <div class="weather-detail">
                     <span class="detail-value">${Math.round(feelsLike)}°C</span>
@@ -290,6 +582,8 @@ function displayCurrentWeather(forecast) {
             </div>
         </div>
     `;
+
+    currentWeatherContainer.innerHTML = htmlContent;
 }
 
 // Afficher les prévisions horaires

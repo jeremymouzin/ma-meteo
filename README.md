@@ -6,6 +6,8 @@ Une application web simple pour consulter la météo locale en temps réel, bas�
 
 - Détection automatique de la localisation de l'utilisateur
 - Recherche manuelle de ville si la géolocalisation n'est pas disponible
+- Sauvegarde automatique de la dernière ville consultée
+- Option pour changer facilement de ville
 - Affichage des conditions météorologiques actuelles
 - Prévisions horaires pour le reste de la journée
 - Prévisions détaillées pour les 4 prochains jours
@@ -20,15 +22,27 @@ Une application web simple pour consulter la météo locale en temps réel, bas�
 - API de géolocalisation du navigateur
 - API Geocode.maps.co pour la conversion des coordonnées en noms de lieux
 - API Nominatim d'OpenStreetMap pour la recherche de villes
+- LocalStorage pour sauvegarder les préférences utilisateur
 
 ## Utilisation
 
 1. Clonez ce dépôt ou téléchargez les fichiers
 2. Ouvrez simplement le fichier `index.html` dans votre navigateur
 
-À l'ouverture de l'application, vous devrez autoriser l'accès à votre position géographique. Une fois accordé, l'application affichera automatiquement les conditions météorologiques actuelles et les prévisions horaires pour le reste de la journée.
+À l'ouverture de l'application, elle vérifie d'abord si vous avez une ville sauvegardée lors d'une précédente visite. Si c'est le cas, elle affiche directement la météo pour cette ville. Sinon, elle vous demande l'autorisation d'accéder à votre position géographique.
 
-Si vous préférez ne pas utiliser la géolocalisation ou si elle n'est pas disponible, vous pouvez utiliser la fonction de recherche par nom de ville.
+Une fois l'autorisation accordée, l'application affiche automatiquement les conditions météorologiques actuelles et les prévisions horaires pour le reste de la journée à votre position.
+
+### Changer de ville
+
+Vous pouvez à tout moment :
+- Cliquer sur l'icône de localisation à côté du nom de la ville pour changer de ville
+- Utiliser le formulaire pour rechercher une nouvelle ville
+- Revenir à votre position actuelle en cliquant sur "Utiliser ma position actuelle"
+
+Votre dernière sélection est automatiquement sauvegardée pour votre prochaine visite.
+
+### Rafraîchir les données
 
 Vous pouvez rafraîchir les données à tout moment en cliquant sur le bouton de rafraîchissement.
 
@@ -40,6 +54,7 @@ L'application est conçue pour fonctionner sur tous les appareils, y compris les
 - Gestion améliorée des erreurs de géolocalisation
 - Option de recherche par ville en fallback
 - Temps d'attente optimisé pour les connexions mobiles
+- Sauvegarde de la ville pour un chargement rapide lors des visites ultérieures
 
 ## Crédits
 
