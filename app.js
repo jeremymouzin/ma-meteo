@@ -226,15 +226,6 @@ function getUserLocation() {
                 },
                 geoOptions
             );
-
-            // Ajouter un timeout de secours au cas où la géolocalisation ne répond pas
-            setTimeout(() => {
-                if (isLocating) {
-                    isLocating = false;
-                    displayLocationFallback();
-                }
-            }, 20000); // 20 secondes
-
         } catch (e) {
             isLocating = false;
             console.error("Exception lors de la géolocalisation:", e);
