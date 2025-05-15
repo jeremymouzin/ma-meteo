@@ -35,14 +35,14 @@ function initApp() {
 
             locationElement.textContent = locationName;
             getWeatherData(userLatitude, userLongitude);
+            return
         } else {
             console.warn("Données de localisation sauvegardées invalides:", savedLocation);
             localStorage.removeItem(STORAGE_KEY);
-            getUserLocation();
         }
-    } else {
-        getUserLocation();
     }
+
+    getUserLocation();
 }
 
 // Afficher le formulaire pour changer de ville
