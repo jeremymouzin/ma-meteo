@@ -241,22 +241,15 @@ function displayLocationFallback() {
     currentWeatherContainer.innerHTML = `
         <div class="location-fallback">
             <p>Impossible d'accéder à votre position. Veuillez saisir une ville :</p>
-            <div class="location-input-container">
-                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input">
+            <form class="location-input-container">
+                <input type="text" id="location-input" placeholder="Entrez une ville (ex: Paris)" class="location-input" required>
                 <button id="location-submit" class="location-submit">Rechercher</button>
-            </div>
+            </form>
         </div>
     `;
 
     // Ajouter un écouteur d'événement pour le bouton de recherche
-    document.getElementById("location-submit").addEventListener("click", searchAndSaveLocation);
-
-    // Permettre de soumettre en appuyant sur Entrée
-    document.getElementById("location-input").addEventListener("keyup", function (event) {
-        if (event.key === "Enter") {
-            searchAndSaveLocation();
-        }
-    });
+    currentWeatherContainer.querySelector("form").addEventListener("submit", searchAndSaveLocation);
 }
 
 // Obtenir le nom de l'emplacement à partir des coordonnées
