@@ -479,11 +479,14 @@ function isRainingToday(forecast) {
 function displayCurrentWeather(forecast) {
     const current = forecast.current;
     const hourly = forecast.hourly;
+    const daily = forecast.daily;
     const weatherCode = current.weather_code;
     const temp = current.temperature_2m;
-    const humidity = current.relative_humidity_2m;
     const feelsLike = current.apparent_temperature;
-    const precipitation = current.precipitation;
+
+    // Récupérer les températures min et max du jour actuel (index 0)
+    const maxTemp = daily.temperature_2m_max[0];
+    const minTemp = daily.temperature_2m_min[0];
 
     // Calcul du risque de pluie pour la matinée et l'après-midi du jour actuel
     const currentDate = new Date();
@@ -541,7 +544,7 @@ function displayCurrentWeather(forecast) {
             <div class="umbrella-alert">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="umbrella-icon">
                     <path d="M12 2v1"></path>
-                    <path d="M12 7a5 5 0 0 0-5 5 5 5 0 0 0 10 0 5 5 0 0 0-5-5z"></path>
+                    <path d="M12 7a5 5 0 0 0-5 5a5 5 0 0 0 10 0a5 5 0 0 0-5-5z"></path>
                     <path d="M12 7V3"></path>
                     <path d="M3.73 14.67a10 10 0 0 1 16.54 0"></path>
                     <path d="M12 19v3"></path>
@@ -550,7 +553,7 @@ function displayCurrentWeather(forecast) {
             </div>`;
     }
 
-    // Continuer le contenu HTML
+    // Continuer le contenu HTML avec les nouvelles informations de température
     htmlContent += `
             <div class="weather-details">
                 <div class="weather-detail">
@@ -558,12 +561,12 @@ function displayCurrentWeather(forecast) {
                     <span class="detail-label">Ressenti</span>
                 </div>
                 <div class="weather-detail">
-                    <span class="detail-value">${humidity}%</span>
-                    <span class="detail-label">Humidité</span>
+                    <span class="detail-value">${Math.round(minTemp)}°C</span>
+                    <span class="detail-label">Min</span>
                 </div>
                 <div class="weather-detail">
-                    <span class="detail-value">${precipitation} mm</span>
-                    <span class="detail-label">Précipitations</span>
+                    <span class="detail-value">${Math.round(maxTemp)}°C</span>
+                    <span class="detail-label">Max</span>
                 </div>
             </div>
             <div class="rain-probability">
