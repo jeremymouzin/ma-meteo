@@ -6,6 +6,10 @@ J'ai développé cette application pour avoir une app de météo **ultra simple 
 
 J'ai développé cette application avec de l'IA et tout ne s'est pas passé comme prévu 🤣, découvrez l'histoire dans [ce thread X](https://x.com/JeremyMouzin/status/1922972436665876982).
 
+## L'application en ligne
+
+L'application est disponible en ligne ici : [https://jeremymouzin.github.io/ma-meteo/](https://jeremymouzin.github.io/ma-meteo/)
+
 ## Auteur
 
 Jérémy Mouzin — Développeur web fullstack et entrepreneur
