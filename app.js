@@ -561,14 +561,28 @@ function displayCurrentWeather(forecast) {
     htmlContent += `
             <div class="rain-probability">
                 <div class="rain-probability-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                    <svg class="drop-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <defs>
+                            <linearGradient id="dropFill1" x1="0%" y1="100%" x2="0%" y2="${100 - morningRainProbability}%">
+                                <stop offset="0%" style="stop-color:var(--primary-color)" />
+                                <stop offset="100%" style="stop-color:transparent" />
+                            </linearGradient>
+                        </defs>
+                        <path class="drop-path" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="url(#dropFill1)" />
+                        <path class="drop-outline" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="none" />
                     </svg>
                     <span>Matin: ${morningRainProbability}% de risque de pluie</span>
                 </div>
                 <div class="rain-probability-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                    <svg class="drop-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <defs>
+                            <linearGradient id="dropFill2" x1="0%" y1="100%" x2="0%" y2="${100 - afternoonRainProbability}%">
+                                <stop offset="0%" style="stop-color:var(--primary-color)" />
+                                <stop offset="100%" style="stop-color:transparent" />
+                            </linearGradient>
+                        </defs>
+                        <path class="drop-path" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="url(#dropFill2)" />
+                        <path class="drop-outline" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="none" />
                     </svg>
                     <span>Après-midi: ${afternoonRainProbability}% de risque de pluie</span>
                 </div>
@@ -601,24 +615,33 @@ function displayHourlyForecast(forecast) {
 
         const temp = hourlyTemps[i];
         const precipProb = hourlyPrecipProb[i];
-        const precip = hourlyPrecip[i];
         const weatherCode = hourlyWeatherCodes[i];
-        const cloudCover = hourlyCloudCover[i];
-
         const weatherInfo = getWeatherInfo(weatherCode);
         const weatherClass = getWeatherClass(weatherCode);
 
         const forecastCard = document.createElement('div');
         forecastCard.className = `forecast-card ${weatherClass}`;
+        // S'assurer que precipProb est un nombre et le limiter entre 0 et 100
+        const rainHeight = Math.min(Math.max(precipProb || 0, 0), 100);
+        forecastCard.style.setProperty('--rain-height', `${rainHeight}%`);
+        console.log(`Heure: ${formattedHour}, Probabilité: ${precipProb}%, Hauteur: ${rainHeight}%`);
+
         forecastCard.innerHTML = `
             <div class="forecast-time">${formattedHour}</div>
             <img src="${weatherInfo.icon}" alt="${weatherInfo.description}" class="forecast-icon">
             <div class="forecast-temp">${Math.round(temp)}°C</div>
             <div class="forecast-precip">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
+                <svg class="drop-icon" width="16" height="16" viewBox="0 0 24 24">
+                    <defs>
+                        <linearGradient id="dropFill_${hour}" x1="0%" y1="100%" x2="0%" y2="${100 - precipProb}%">
+                            <stop offset="0%" style="stop-color:var(--primary-color)" />
+                            <stop offset="100%" style="stop-color:transparent" />
+                        </linearGradient>
+                    </defs>
+                    <path class="drop-path" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="url(#dropFill_${hour})" />
+                    <path class="drop-outline" d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z" fill="none" />
                 </svg>
-                ${precipProb}% (${precip} mm)
+                ${precipProb}%
             </div>
         `;
 

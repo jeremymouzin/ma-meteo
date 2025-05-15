@@ -186,6 +186,19 @@ h2 {
     color: var(--primary-color);
 }
 
+.drop-icon {
+    margin-right: 4px;
+}
+
+.drop-outline {
+    stroke: var(--primary-color);
+    stroke-width: 1.5;
+}
+
+.drop-path {
+    transition: fill 0.3s ease;
+}
+
 .hourly-forecast {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -200,6 +213,29 @@ h2 {
     box-shadow: var(--box-shadow);
     text-align: center;
     transition: transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border: 1px solid rgba(52, 152, 219, 0.1);
+}
+
+.forecast-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--rain-height, 0%);
+    background: linear-gradient(to top, rgba(52, 152, 219, 0.7), rgba(52, 152, 219, 0.3));
+    transition: height 0.3s ease;
+    z-index: -1;
+    clip-path: path('M0,250 L0,15 C50,5 100,25 150,15 S200,5 250,15 L250,250 Z');
+    animation: waveMove 3s ease-in-out infinite;
+}
+
+.forecast-card>* {
+    position: relative;
+    z-index: 2;
 }
 
 .forecast-card:hover {
@@ -596,5 +632,18 @@ footer a:hover {
 
     50% {
         transform: translateY(-3px);
+    }
+}
+
+@keyframes waveMove {
+
+    0%,
+    100% {
+
+        clip-path: path('M0,250 L0,15 C62.5,5 125,25 187.5,15 S250,25 250,15 L250,250 Z');
+    }
+
+    50% {
+        clip-path: path('M0,250 L0,15 C62.5,25 125,5 187.5,15 S250,15 250,25 L250,250 Z');
     }
 }
