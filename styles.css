@@ -89,11 +89,16 @@ h2 {
     border-radius: var(--border-radius);
     padding: 2rem;
     box-shadow: var(--box-shadow);
-    margin-bottom: 2rem;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#current-weather {
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
 }
 
 .weather-icon {
