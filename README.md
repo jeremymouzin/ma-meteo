@@ -1,65 +1,39 @@
 # Ma Météo Locale
 
-Une application web simple pour consulter la météo locale en temps réel, basée sur la localisation de l'utilisateur.
+## Pourquoi cette appli ?
 
-## Fonctionnalités
+J'ai développé cette application pour avoir une app de météo **ultra simple et ultra rapide** (sans pub ou autre chose qui ralentit l'affichage). Car le matin je veux pouvoir en 1 clic savoir s'il va pleuvoir ou pas et les températures pour habiller mes filles avant l'école !
 
-- Détection automatique de la localisation de l'utilisateur
-- Recherche manuelle de ville si la géolocalisation n'est pas disponible
-- Sauvegarde automatique de la dernière ville consultée
-- Option pour changer facilement de ville
-- Affichage des conditions météorologiques actuelles
+J'ai développé cette application avec de l'IA et tout ne s'est pas passé comme prévu 🤣, découvrez l'histoire dans [ce thread X](https://x.com/JeremyMouzin/status/1922972436665876982).
+
+## Auteur
+
+Jérémy Mouzin — Développeur web fullstack et entrepreneur
+- [Mon site personnel](https://www.jeremymouzin.com)
+- [Ma formation JavaScript](https://www.javascriptdezero.com)
+
+## Design & UX
+
+J'ai développé cette application avec l'objectif de fournir la meilleure expérience utilisateur possible :
+
+- Détection automatique de la localisation de l'utilisateur via la fonction de géolocalisation
+- Recherche manuelle de la ville si la géolocalisation n'est pas disponible
+- Sauvegarde automatique de la dernière ville utilisée pour ne pas avoir à la taper / sélectionner la prochaine fois
+- Option pour changer facilement de ville si besoin
+- Prévisions des températures min/max du jour + s'il va pleuvoir ou pas
 - Prévisions horaires pour le reste de la journée
 - Prévisions détaillées pour les 4 prochains jours
-- Informations sur la température, les précipitations et la couverture nuageuse
-- Compatibilité mobile optimisée
-- Interface utilisateur responsive et intuitive
+- Interface responsive accessible depuis les mobiles
+- Interface utilisateur intuitive
 
 ## Technologies utilisées
 
 - HTML5, CSS3, JavaScript (ES6+)
-- API Open-Meteo pour les données météorologiques
+- API [OpenMeteo](https://open-meteo.com/) pour les données météorologiques
 - API de géolocalisation du navigateur
-- API Geocode.maps.co pour la conversion des coordonnées en noms de lieux
+- API [Geocode.maps.co](https://geocode.maps.co/) pour la conversion des coordonnées GPS en noms de lieux
 - API Nominatim d'OpenStreetMap pour la recherche de villes
 - LocalStorage pour sauvegarder les préférences utilisateur
-
-## Utilisation
-
-1. Clonez ce dépôt ou téléchargez les fichiers
-2. Ouvrez simplement le fichier `index.html` dans votre navigateur
-
-À l'ouverture de l'application, elle vérifie d'abord si vous avez une ville sauvegardée lors d'une précédente visite. Si c'est le cas, elle affiche directement la météo pour cette ville. Sinon, elle vous demande l'autorisation d'accéder à votre position géographique.
-
-Une fois l'autorisation accordée, l'application affiche automatiquement les conditions météorologiques actuelles et les prévisions horaires pour le reste de la journée à votre position.
-
-### Changer de ville
-
-Vous pouvez à tout moment :
-- Cliquer sur l'icône de localisation à côté du nom de la ville pour changer de ville
-- Utiliser le formulaire pour rechercher une nouvelle ville
-- Revenir à votre position actuelle en cliquant sur "Utiliser ma position actuelle"
-
-Votre dernière sélection est automatiquement sauvegardée pour votre prochaine visite.
-
-### Rafraîchir les données
-
-Vous pouvez rafraîchir les données à tout moment en cliquant sur le bouton de rafraîchissement.
-
-## Compatibilité mobile
-
-L'application est conçue pour fonctionner sur tous les appareils, y compris les smartphones et tablettes. Des fonctionnalités spécifiques ont été implémentées pour améliorer l'expérience sur mobile :
-
-- Interface adaptative
-- Gestion améliorée des erreurs de géolocalisation
-- Option de recherche par ville en fallback
-- Temps d'attente optimisé pour les connexions mobiles
-- Sauvegarde de la ville pour un chargement rapide lors des visites ultérieures
-
-## Crédits
-
-- Données météorologiques fournies par [Open-Meteo](https://open-meteo.com/)
-- Icônes météorologiques créées spécifiquement pour ce projet
 
 ## Licence
 
