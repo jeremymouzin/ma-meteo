@@ -103,9 +103,36 @@ h2 {
 }
 
 .temperature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.temp-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.temp-number {
     font-size: 3rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+}
+
+.temp-label {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+    text-transform: uppercase;
+    margin-top: -0.5rem;
+}
+
+.temp-separator {
+    font-size: 3rem;
+    font-weight: 300;
+    color: rgba(0, 0, 0, 0.4);
+    margin-top: -0.5rem;
 }
 
 .weather-description {
@@ -536,12 +563,11 @@ footer a:hover {
     max-width: 90%;
 }
 
-.umbrella-icon {
-    width: 28px;
-    height: 28px;
-    color: #fff;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+.umbrella-emoji {
+    font-size: 2rem;
     animation: umbrella-bounce 4s infinite;
+    display: inline-block;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 @keyframes pulse {

@@ -535,40 +535,30 @@ function displayCurrentWeather(forecast) {
     let htmlContent = `
         <div class="current-weather ${weatherClass}">
             <img src="${weatherInfo.icon}" alt="${weatherInfo.description}" class="weather-icon">
-            <div class="temperature">${Math.round(temp)}°C</div>
+            <div class="temperature">
+                <div class="temp-value">
+                    <span class="temp-number">${Math.round(minTemp)}°</span>
+                    <span class="temp-label">min</span>
+                </div>
+                <div class="temp-separator">/</div>
+                <div class="temp-value">
+                    <span class="temp-number">${Math.round(maxTemp)}°</span>
+                    <span class="temp-label">max</span>
+                </div>
+            </div>
             <div class="weather-description">${weatherInfo.description}</div>`;
 
     // Ajouter l'alerte parapluie si nécessaire
     if (raining) {
         htmlContent += `
             <div class="umbrella-alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="umbrella-icon">
-                    <path d="M12 2v1"></path>
-                    <path d="M12 7a5 5 0 0 0-5 5a5 5 0 0 0 10 0a5 5 0 0 0-5-5z"></path>
-                    <path d="M12 7V3"></path>
-                    <path d="M3.73 14.67a10 10 0 0 1 16.54 0"></path>
-                    <path d="M12 19v3"></path>
-                </svg>
+                <span class="umbrella-emoji">☂️</span>
                 <span>Prends ton parapluie aujourd'hui !</span>
             </div>`;
     }
 
     // Continuer le contenu HTML avec les nouvelles informations de température
     htmlContent += `
-            <div class="weather-details">
-                <div class="weather-detail">
-                    <span class="detail-value">${Math.round(feelsLike)}°C</span>
-                    <span class="detail-label">Ressenti</span>
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-value">${Math.round(minTemp)}°C</span>
-                    <span class="detail-label">Min</span>
-                </div>
-                <div class="weather-detail">
-                    <span class="detail-value">${Math.round(maxTemp)}°C</span>
-                    <span class="detail-label">Max</span>
-                </div>
-            </div>
             <div class="rain-probability">
                 <div class="rain-probability-item">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
