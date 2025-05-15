@@ -666,7 +666,6 @@ function displayDailyForecast(forecast) {
         const formattedDate = formatDate(date);
         const maxTemp = dailyMaxTemps[i];
         const minTemp = dailyMinTemps[i];
-        const precipSum = dailyPrecipSum[i];
         const precipProb = dailyPrecipProb[i];
         const weatherCode = dailyWeatherCodes[i];
 
@@ -676,10 +675,6 @@ function displayDailyForecast(forecast) {
         // Calculer les températures du matin (25%) et de l'après-midi (75%)
         const morningTemp = minTemp + (maxTemp - minTemp) * 0.25;
         const afternoonTemp = minTemp + (maxTemp - minTemp) * 0.75;
-
-        // Calculer les précipitations du matin et de l'après-midi (simplement divisées par 2 pour cet exemple)
-        const morningPrecip = precipSum / 2;
-        const afternoonPrecip = precipSum / 2;
 
         const dailyCard = document.createElement('div');
         dailyCard.className = `daily-card ${weatherClass}`;
@@ -695,7 +690,7 @@ function displayDailyForecast(forecast) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
                         </svg>
-                        ${precipProb}% (${morningPrecip.toFixed(1)} mm)
+                        ${precipProb}%
                     </span>
                 </div>
             </div>
@@ -708,7 +703,7 @@ function displayDailyForecast(forecast) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22c-4.97 0-9-4.5-9-9 0-4 9-12 9-12s9 8 9 12c0 4.5-4.03 9-9 9z"></path>
                         </svg>
-                        ${precipProb}% (${afternoonPrecip.toFixed(1)} mm)
+                        ${precipProb}%
                     </span>
                 </div>
             </div>
