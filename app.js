@@ -7,6 +7,7 @@ const STORAGE_KEY = "meteo-location"; // Clé pour le localStorage
 
 // DOM Elements
 const locationElement = document.getElementById("location");
+const changeLocationBtn = document.getElementById("change-location-btn");
 const refreshButton = document.getElementById("refresh-btn");
 const currentWeatherContainer = document.getElementById("current-weather");
 const hourlyForecastContainer = document.getElementById("hourly-forecast");
@@ -16,12 +17,10 @@ const loader = document.getElementById("loader");
 // Événements
 document.addEventListener("DOMContentLoaded", initApp);
 refreshButton.addEventListener("click", refreshWeather);
+changeLocationBtn.addEventListener("click", displayChangeLocationForm);
 
 // Initialisation de l'application
 function initApp() {
-    // Ajouter le bouton pour changer de ville
-    addChangeLocationButton();
-
     // Vérifier s'il y a une ville sauvegardée
     const savedLocation = getSavedLocation();
 
@@ -44,31 +43,6 @@ function initApp() {
     } else {
         getUserLocation();
     }
-}
-
-// Ajouter un bouton pour changer de ville
-function addChangeLocationButton() {
-    const locationInfo = document.querySelector(".location-info");
-
-    // Créer le bouton pour changer de ville
-    const changeLocationBtn = document.createElement("button");
-    changeLocationBtn.id = "change-location-btn";
-    changeLocationBtn.setAttribute("aria-label", "Changer de ville");
-    changeLocationBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="10" r="3"></circle>
-            <path d="M12 2a8 8 0 0 0-8 8c0 1.892 1.703 5.243 5 10 3.297-4.757 5-8.108 5-10a8 8 0 0 0-2-5.292"></path>
-            <path d="M20 18h-8"></path>
-            <path d="M18 14l4 4-4 4"></path>
-        </svg>
-    `;
-
-    // Ajouter l'événement click
-    changeLocationBtn.addEventListener("click", displayChangeLocationForm);
-
-    // Ajouter le bouton après l'élément de localisation
-    locationInfo.appendChild(changeLocationBtn);
 }
 
 // Afficher le formulaire pour changer de ville
