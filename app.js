@@ -180,7 +180,6 @@ function saveLocation(name, latitude, longitude) {
         name,
         latitude,
         longitude,
-        timestamp: Date.now() // Pour savoir quand la donnée a été sauvegardée
     };
 
     try {
@@ -193,25 +192,9 @@ function saveLocation(name, latitude, longitude) {
 // Récupérer la localisation sauvegardée
 function getSavedLocation() {
     try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (!savedData) return null;
-
-        const data = JSON.parse(savedData);
-
-        // Vérifier si les données ne sont pas trop anciennes (7 jours max)
-        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 jours en millisecondes
-        const now = Date.now();
-
-        if (data.timestamp && (now - data.timestamp > maxAge)) {
-            console.log("Données de localisation expirées, suppression...");
-            localStorage.removeItem(STORAGE_KEY);
-            return null;
-        }
-
-        return data;
+        return JSON.parse(localStorage.getItem(STORAGE_KEY));
     } catch (error) {
         console.error("Erreur lors de la récupération de la localisation:", error);
-        // En cas d'erreur, nettoyer le localStorage
         localStorage.removeItem(STORAGE_KEY);
         return null;
     }
