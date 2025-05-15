@@ -135,33 +135,7 @@ h2 {
     margin-top: -0.5rem;
 }
 
-.weather-description {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
 
-.weather-details {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-
-.weather-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.detail-value {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.detail-label {
-    font-size: 0.9rem;
-    color: #666;
-}
 
 .rain-probability {
     margin-top: 1.5rem;
@@ -229,7 +203,9 @@ h2 {
     background: linear-gradient(to top, rgba(52, 152, 219, 0.7), rgba(52, 152, 219, 0.3));
     transition: height 0.3s ease;
     z-index: -1;
+    -webkit-clip-path: path('M0,250 L0,15 C50,5 100,25 150,15 S200,5 250,15 L250,250 Z');
     clip-path: path('M0,250 L0,15 C50,5 100,25 150,15 S200,5 250,15 L250,250 Z');
+    -webkit-animation: waveMove 3s ease-in-out infinite;
     animation: waveMove 3s ease-in-out infinite;
 }
 
@@ -388,8 +364,15 @@ footer a:hover {
     border: 5px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
     border-top-color: var(--primary-color);
+    -webkit-animation: spin 1s ease-in-out infinite;
     animation: spin 1s ease-in-out infinite;
     margin-bottom: 1rem;
+}
+
+@-webkit-keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
@@ -594,6 +577,7 @@ footer a:hover {
     font-weight: bold;
     color: #fff;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    -webkit-animation: pulse 2s infinite;
     animation: pulse 2s infinite;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     max-width: 90%;
@@ -601,9 +585,28 @@ footer a:hover {
 
 .umbrella-emoji {
     font-size: 2rem;
+    -webkit-animation: umbrella-bounce 4s infinite;
     animation: umbrella-bounce 4s infinite;
     display: inline-block;
+    -webkit-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+@-webkit-keyframes pulse {
+    0% {
+        transform: scale(1);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    50% {
+        transform: scale(1.05);
+        background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    100% {
+        transform: scale(1);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
 }
 
 @keyframes pulse {
@@ -623,6 +626,18 @@ footer a:hover {
     }
 }
 
+@-webkit-keyframes umbrella-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
 @keyframes umbrella-bounce {
 
     0%,
@@ -635,15 +650,34 @@ footer a:hover {
     }
 }
 
-@keyframes waveMove {
+@-webkit-keyframes waveMove {
 
     0%,
     100% {
+
+        -webkit-clip-path: path('M0,250 L0,15 C62.5,5 125,25 187.5,15 S250,25 250,15 L250,250 Z');
 
         clip-path: path('M0,250 L0,15 C62.5,5 125,25 187.5,15 S250,25 250,15 L250,250 Z');
     }
 
     50% {
+        -webkit-clip-path: path('M0,250 L0,15 C62.5,25 125,5 187.5,15 S250,15 250,25 L250,250 Z');
+        clip-path: path('M0,250 L0,15 C62.5,25 125,5 187.5,15 S250,15 250,25 L250,250 Z');
+    }
+}
+
+@keyframes waveMove {
+
+    0%,
+    100% {
+
+        -webkit-clip-path: path('M0,250 L0,15 C62.5,5 125,25 187.5,15 S250,25 250,15 L250,250 Z');
+
+        clip-path: path('M0,250 L0,15 C62.5,5 125,25 187.5,15 S250,25 250,15 L250,250 Z');
+    }
+
+    50% {
+        -webkit-clip-path: path('M0,250 L0,15 C62.5,25 125,5 187.5,15 S250,15 250,25 L250,250 Z');
         clip-path: path('M0,250 L0,15 C62.5,25 125,5 187.5,15 S250,15 250,25 L250,250 Z');
     }
 }
