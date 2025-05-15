@@ -14,6 +14,9 @@ const hourlyForecastContainer = document.getElementById("hourly-forecast");
 const dailyForecastContainer = document.getElementById("daily-forecast");
 const loader = document.getElementById("loader");
 
+// Valeurs courantes des props display
+const loaderDisplayOriginalValue = getComputedStyle(loader).display;
+
 // Événements
 document.addEventListener("DOMContentLoaded", initApp);
 refreshButton.addEventListener("click", refreshWeather);
@@ -99,7 +102,7 @@ async function searchAndSaveLocation() {
 
     if (!cityName) return;
 
-    loader.style.display = "flex";
+    loader.style.display = loaderDisplayOriginalValue;
     currentWeatherContainer.innerHTML = '';
     currentWeatherContainer.appendChild(loader);
 
@@ -201,7 +204,7 @@ function getUserLocation() {
     if (isLocating) return;
 
     isLocating = true;
-    loader.style.display = "flex";
+    loader.style.display = loaderDisplayOriginalValue;
 
     if (navigator.geolocation) {
         try {
@@ -326,7 +329,7 @@ async function getLocationName(lat, lon) {
 // Rafraîchir les données météo
 function refreshWeather() {
     if (userLatitude && userLongitude) {
-        loader.style.display = "flex";
+        loader.style.display = loaderDisplayOriginalValue;
         currentWeatherContainer.innerHTML = '';
         currentWeatherContainer.appendChild(loader);
         hourlyForecastContainer.innerHTML = '';
@@ -346,7 +349,7 @@ async function getWeatherData(latitude, longitude) {
     }
 
     try {
-        loader.style.display = "flex";
+        loader.style.display = loaderDisplayOriginalValue;
 
         const params = {
             latitude,
