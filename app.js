@@ -591,7 +591,6 @@ function displayHourlyForecast(forecast) {
         // S'assurer que precipProb est un nombre et le limiter entre 0 et 100
         const rainHeight = Math.min(Math.max(precipProb || 0, 0), 100);
         forecastCard.style.setProperty('--rain-height', `${rainHeight}%`);
-        console.log(`Heure: ${formattedHour}, Probabilité: ${precipProb}%, Hauteur: ${rainHeight}%`);
 
         forecastCard.innerHTML = `
             <div class="forecast-time">${formattedHour}</div>
