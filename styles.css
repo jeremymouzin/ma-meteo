@@ -567,6 +567,10 @@ footer a:hover {
         border-radius: var(--border-radius);
         padding: 0.8rem;
     }
+
+    .current-weather {
+        width: 100%;
+    }
 }
 
 /* Styles pour l'alerte parapluie */
